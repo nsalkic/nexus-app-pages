@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NEXUS: Learn, Play, Create. A learning world for kids in K–3</title>
+<meta name="description" content="NEXUS is a modern, AI-driven learning world for kindergarten to 3rd grade: learning games, picture books, comics, audio books and an art studio, with questions matched to each grade. No ads, no tracking. Play free in your browser.">
+<meta name="theme-color" content="#071440">
+<link rel="canonical" href="https://nsalkic.github.io/nexus-app-pages/">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/img/icon-192.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NEXUS">
+<meta property="og:title" content="NEXUS: Learn. Play. Create.">
+<meta property="og:description" content="A modern, AI-driven learning world for kids in K–3: games, books, art and more. No ads, no tracking.">
+<meta property="og:url" content="https://nsalkic.github.io/nexus-app-pages/">
+<meta property="og:image" content="https://nsalkic.github.io/nexus-app-pages/assets/img/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The NEXUS logo over a friendly rover in a bright sci-fi world">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="assets/fonts/lexend-bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/img/hero_portrait.webp" as="image" media="(max-width: 899px)">
+<link rel="preload" href="assets/img/hero_wide.webp" as="image" media="(min-width: 900px)">
+<style>
+@font-face{font-family:Lexend;src:url(assets/fonts/lexend-regular.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:Lexend;src:url(assets/fonts/lexend-bold.woff2) format("woff2");font-weight:700;font-display:swap}
+:root{--navy:#071440;--navy2:#0B1F5C;--panel:rgba(13,30,82,.82);--cyan:#3FD8FF;--blue:#2E7BFF;--yellow:#FFD23F;--yellow-deep:#F5A623;
+ --text:#F2F7FF;--muted:#B9CCF0;--ink:#0B1433;--green:#2EE59D;--pink:#FF5FA2;--radius:24px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;font-family:Lexend,"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);line-height:1.55;
+ background:var(--navy) radial-gradient(1200px 700px at 80% -10%,#1B3C9E55,transparent 60%) fixed;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:var(--cyan)}
+.skip{position:absolute;left:-999px;top:8px;background:var(--yellow);color:var(--ink);padding:10px 16px;border-radius:12px;z-index:9}
+.skip:focus{left:8px}
+.wrap{width:min(1120px,100% - 40px);margin-inline:auto}
+/* hero: same art, logo and type as the in-game welcome screen */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;text-align:center;overflow:hidden;
+ padding:max(28px,env(safe-area-inset-top)) 20px 36px;isolation:isolate}
+.hero picture,.hero picture img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;
+ background:linear-gradient(180deg,rgba(7,15,51,.72) 0%,rgba(7,15,51,.18) 38%,rgba(7,15,51,0) 58%,rgba(5,10,38,.88) 100%)}
+.logo{width:min(78vw,380px);height:auto;filter:drop-shadow(0 6px 24px rgba(63,216,255,.35))}
+h1{font-size:clamp(2.2rem,8.5vw,4rem);line-height:1.08;margin:.35em 0 .2em;letter-spacing:.01em;text-shadow:0 3px 18px rgba(0,0,0,.45)}
+.tag{font-size:clamp(1.05rem,3.6vw,1.4rem);font-weight:700;margin:0 auto;max-width:30ch;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+.hero .spacer{flex:1;min-height:34vh}
+.cta{display:inline-flex;align-items:center;justify-content:center;gap:.5em;min-height:64px;padding:0 2.2em;border-radius:999px;
+ background:linear-gradient(180deg,#FFE06A,var(--yellow) 55%,#F2C12C);color:var(--ink);font-weight:700;font-size:1.35rem;text-decoration:none;
+ box-shadow:0 6px 0 #C8920F,0 10px 30px rgba(255,210,63,.45);transition:transform .12s ease,box-shadow .12s ease}
+.cta:hover{transform:translateY(-2px)}
+.cta:active{transform:translateY(3px);box-shadow:0 3px 0 #C8920F,0 6px 18px rgba(255,210,63,.4)}
+.cta:focus-visible,.ghost:focus-visible,a:focus-visible{outline:3px solid var(--cyan);outline-offset:4px}
+.hero .cta{width:min(100%,420px)}
+.note{margin:.9em 0 0;font-size:.95rem;color:var(--text);text-shadow:0 2px 8px rgba(0,0,0,.7)}
+.ghost{display:inline-block;margin-top:.6em;color:var(--text);font-weight:700;text-decoration:none;padding:.5em 1.1em;border-radius:999px;
+ border:2px solid rgba(63,216,255,.7);background:rgba(11,31,92,.55)}
+/* sections */
+section{padding:64px 0}
+.kicker{color:var(--yellow);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.85rem;margin:0 0 .4em}
+h2{font-size:clamp(1.7rem,5vw,2.5rem);line-height:1.15;margin:0 0 .4em}
+.lead{color:var(--muted);font-size:1.1rem;max-width:62ch;margin:0 0 1.8em}
+.intro{background:linear-gradient(180deg,rgba(5,10,38,.88),transparent 140px)}
+.grid{display:grid;gap:20px;grid-template-columns:1fr}
+@media (min-width:700px){.grid.two{grid-template-columns:1fr 1fr}.grid.three{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:1000px){.grid.four{grid-template-columns:repeat(4,1fr)}}
+@media (min-width:700px) and (max-width:999px){.grid.four{grid-template-columns:1fr 1fr}}
+.card{background:var(--panel);border:2px solid rgba(63,216,255,.55);border-radius:var(--radius);overflow:hidden;
+ box-shadow:0 0 0 1px rgba(63,216,255,.08),0 10px 34px rgba(0,0,0,.35),inset 0 0 24px rgba(63,216,255,.06)}
+.card .shot{aspect-ratio:1366/900;object-fit:cover;width:100%;height:auto;border-bottom:2px solid rgba(63,216,255,.35);background:#0D1E52}
+.card .body{padding:18px 20px 22px}
+.card h3{display:flex;align-items:center;gap:.6em;margin:0 0 .35em;font-size:1.3rem}
+.card h3 img{width:48px;height:48px;border-radius:12px}
+.card p{margin:0;color:var(--muted)}
+.games .card{border-color:rgba(63,216,255,.55)}
+.pill{display:inline-block;font-size:.8rem;font-weight:700;padding:.2em .7em;border-radius:999px;background:rgba(46,229,157,.15);color:var(--green);border:1px solid rgba(46,229,157,.5);margin-bottom:.6em}
+.feature{display:grid;gap:22px;align-items:center;margin-top:28px}
+@media (min-width:860px){.feature{grid-template-columns:1.1fr 1fr}.feature.flip .media{order:2}}
+.feature .media{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+.feature .media img{border-radius:18px;border:2px solid rgba(63,216,255,.45);aspect-ratio:1366/900;object-fit:cover;width:100%;height:auto;background:#0D1E52}
+.feature .media img.wide{grid-column:1/-1}
+.feature h3{font-size:1.6rem;margin:.1em 0 .4em;display:flex;align-items:center;gap:.5em}
+.feature h3 img{width:56px;height:56px;border-radius:14px}
+.ticks{list-style:none;padding:0;margin:1em 0 0;display:grid;gap:.55em}
+.ticks li{padding-left:1.9em;position:relative}
+.ticks li::before{content:"";position:absolute;left:0;top:.28em;width:1.15em;height:1.15em;border-radius:50%;
+ background:var(--green) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%230B1433' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/80% no-repeat}
+.standards{display:grid;gap:18px;align-items:center;padding:26px;border-radius:var(--radius);
+ background:linear-gradient(135deg,rgba(46,123,255,.28),rgba(91,60,168,.25));border:2px solid rgba(255,210,63,.55)}
+@media (min-width:760px){.standards{grid-template-columns:auto 1fr}}
+.grades{display:flex;gap:10px;flex-wrap:wrap}
+.grades span{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:1.3rem;color:var(--ink)}
+/* how it works */
+.steps{counter-reset:s;display:grid;gap:16px;grid-template-columns:1fr;padding:0;margin:0;list-style:none}
+@media (min-width:700px){.steps{grid-template-columns:repeat(4,1fr)}}
+.steps li{background:var(--panel);border:2px solid rgba(63,216,255,.45);border-radius:20px;padding:20px 18px 20px 76px;position:relative;min-height:96px}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:18px;top:20px;width:44px;height:44px;border-radius:50%;
+ display:grid;place-items:center;background:var(--yellow);color:var(--ink);font-weight:700;font-size:1.25rem;box-shadow:0 0 18px rgba(255,210,63,.5)}
+@media (min-width:700px){.steps li{padding:76px 18px 20px}.steps li::before{top:18px}}
+.steps b{display:block;font-size:1.1rem;margin-bottom:.2em}
+.steps span{color:var(--muted)}
+/* trust */
+.trust .card{padding:22px 22px 24px;text-align:left}
+.trust .icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;margin-bottom:.7em;background:rgba(63,216,255,.14);border:2px solid rgba(63,216,255,.5)}
+.trust .icon svg{width:28px;height:28px}
+.trust h3{margin:0 0 .3em;font-size:1.15rem}
+/* coming soon */
+.soon{display:grid;gap:14px;grid-template-columns:repeat(2,1fr)}
+@media (min-width:760px){.soon{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:1050px){.soon{grid-template-columns:repeat(6,1fr)}}
+.soon div{border-radius:18px;padding:16px 14px;background:rgba(13,30,82,.7);border:2px dashed var(--c);text-align:center}
+.soon b{display:block;color:var(--c);font-size:1.02rem}
+.soon span{color:var(--muted);font-size:.92rem}
+.devices{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.devices .chip{display:inline-flex;align-items:center;gap:.5em;padding:.65em 1.1em;border-radius:14px;background:rgba(242,247,255,.08);border:2px solid rgba(242,247,255,.35);font-weight:700}
+.final{text-align:center;padding:72px 0 80px;background:radial-gradient(600px 260px at 50% 30%,rgba(63,216,255,.18),transparent 70%)}
+footer{border-top:1px solid rgba(63,216,255,.25);padding:28px 0 calc(28px + env(safe-area-inset-bottom));color:var(--muted);font-size:.95rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center;justify-content:space-between}
+footer nav{display:flex;gap:22px;flex-wrap:wrap}
+footer a{color:var(--text);font-weight:700}
+</style>
+</head>
+<body>
+<a class="skip" href="#inside">Skip to what's inside</a>
+
+<header class="hero">
+  <picture>
+    <source media="(min-width: 900px)" srcset="assets/img/hero_wide.webp">
+    <img src="assets/img/hero_portrait.webp" alt="" width="1000" height="1778" fetchpriority="high">
+  </picture>
+  <img class="logo" src="assets/img/logo.webp" width="760" height="336" alt="NEXUS">
+  <h1>Learn. Play. Create.</h1>
+  <p class="tag">The modern, AI-driven learning world for kids in kindergarten to 3rd grade.</p>
+  <div class="spacer"></div>
+  <a class="cta" href="play/">Play now <span aria-hidden="true">›</span></a>
+  <p class="note">Free in your browser · No download · No ads</p>
+  <a class="ghost" href="#inside">See what's inside ↓</a>
+</header>
+
+<main>
+<section id="inside" class="intro">
+  <div class="wrap">
+    <p class="kicker">What's inside</p>
+    <h2>Games, reading, books, art and more. All in one place.</h2>
+    <p class="lead">Every mission asks real reading and math questions for your child's grade, with a friendly voice that reads everything out loud.</p>
+
+    <div class="grid three games">
+      <article class="card">
+        <img class="shot" src="assets/img/shot_soccer.webp" width="800" height="527" loading="lazy" alt="Soccer: a counting question above three answer boards in the goal">
+        <div class="body"><h3><img src="assets/img/logo_soccer.webp" width="48" height="48" alt="">Soccer</h3><p>Answer to score. Pick a team and a player, then tap the right answer in the goal to shoot.</p></div>
+      </article>
+      <article class="card">
+        <img class="shot" src="assets/img/shot_rally.webp" width="800" height="527" loading="lazy" alt="NEXUS Rally: karts racing on a city track with a question and three picture answers">
+        <div class="body"><h3><img src="assets/img/logo_rally.webp" width="48" height="48" alt="">NEXUS Rally</h3><p>Race to the finish. Right answers fuel your kart, so the faster you think, the faster you go.</p></div>
+      </article>
+      <article class="card">
+        <img class="shot" src="assets/img/shot_bots.webp" width="800" height="527" loading="lazy" alt="Bot Builders: a robot being built part by part as questions are answered">
+        <div class="body"><h3><img src="assets/img/logo_bot_builders.webp" width="48" height="48" alt="">Bot Builders</h3><p>Build it, then battle. Each right answer installs a robot part, then your bot is ready to battle.</p></div>
+      </article>
+    </div>
+
+    <div class="feature">
+      <div class="media">
+        <img class="wide" src="assets/img/shot_book.webp" width="800" height="527" loading="lazy" alt="A picture book page with the words highlighted as they are read aloud">
+        <img src="assets/img/shot_comic.webp" width="800" height="527" loading="lazy" alt="A comic book page">
+        <img src="assets/img/shot_audio.webp" width="800" height="527" loading="lazy" alt="An audio book playing">
+      </div>
+      <div>
+        <h3><img src="assets/img/logo_books.webp" width="56" height="56" alt="">Books</h3>
+        <p class="lead" style="margin-bottom:0">Read, listen and laugh. Stories that teach character and self-discipline: being kind, sticking with it, telling the truth.</p>
+        <ul class="ticks">
+          <li><b>Picture books</b> with "Read to me" and word-by-word highlighting.</li>
+          <li><b>Comics</b> with heroes, robots and space adventures.</li>
+          <li><b>Audio books</b> to listen to with the read-aloud voice.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="feature flip">
+      <div class="media">
+        <img class="wide" src="assets/img/shot_coloring.webp" width="800" height="527" loading="lazy" alt="Coloring a moon rover page with fill, crayon and paint tools">
+        <img class="wide" src="assets/img/shot_art.webp" width="800" height="527" loading="lazy" alt="The Art Studio menu: Color, Trace, Free Draw and Learn to Draw">
+      </div>
+      <div>
+        <h3><img src="assets/img/logo_art_studio.webp" width="56" height="56" alt="">Art Studio</h3>
+        <p class="lead" style="margin-bottom:0">Color, trace and draw. Hundreds of coloring pages in themes kids love, plus drawing lessons step by step.</p>
+        <ul class="ticks">
+          <li><b>Coloring</b>: fill, crayon, paint, magic and stickers.</li>
+          <li><b>Trace</b> and <b>Free Draw</b> for steady hands.</li>
+          <li><b>Learn to Draw</b>: one easy step at a time.</li>
+          <li><b>My Art</b> keeps every finished picture.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="standards" style="margin-top:44px">
+      <div class="grades" aria-hidden="true">
+        <span style="background:#B38BFF">K</span><span style="background:var(--green)">1</span><span style="background:#FF9A3D">2</span><span style="background:var(--cyan)">3</span>
+      </div>
+      <div>
+        <h3 style="margin:0 0 .3em;font-size:1.35rem">Questions matched to your child's grade</h3>
+        <p style="margin:0;color:var(--muted)">Reading and math questions follow grade-level learning standards (Illinois Learning Standards) for kindergarten through 3rd grade, and grow with your child.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <p class="kicker">How it works</p>
+    <h2>Ready in a minute</h2>
+    <ol class="steps">
+      <li><b>A grown-up sets up</b><span>Parents sign in behind a quick grown-up check. No account needed.</span></li>
+      <li><b>Pick a grade</b><span>K, 1st, 2nd or 3rd. Questions match it.</span></li>
+      <li><b>Play missions</b><span>Soccer, Rally, Bot Builders, Books and Art Studio.</span></li>
+      <li><b>Earn stars</b><span>Stars, medals and streaks show progress.</span></li>
+    </ol>
+  </div>
+</section>
+
+<section id="parents" class="trust">
+  <div class="wrap">
+    <p class="kicker">Made for kids and parents</p>
+    <h2>Safe by design</h2>
+    <p class="lead">NEXUS collects no data. What your family types in stays on your device.</p>
+    <div class="grid four">
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#3FD8FF" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></div><h3>No ads. Ever.</h3><p>Nothing to click away to, nothing to buy.</p></div>
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#3FD8FF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M4 20L20 4"/></svg></div><h3>No tracking</h3><p>No analytics, no trackers, no accounts on our servers.</p></div>
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#3FD8FF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg></div><h3>Stays on the device</h3><p>Profiles, stars and drawings are saved only on this device.</p></div>
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#3FD8FF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg></div><h3>Grown-up check</h3><p>Setup and profiles sit behind a quick question only grown-ups can answer.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="soon">
+  <div class="wrap">
+    <p class="kicker">Coming soon</p>
+    <h2>New worlds are on the way</h2>
+    <div class="soon">
+      <div style="--c:#FFD23F"><b>Math Missions</b><span>Count, add and solve.</span></div>
+      <div style="--c:#2EE59D"><b>Science Lab</b><span>Try cool experiments.</span></div>
+      <div style="--c:#3FD8FF"><b>Coding Quest</b><span>Give a robot steps.</span></div>
+      <div style="--c:#FF5FA2"><b>Music Maker</b><span>Make beats and songs.</span></div>
+      <div style="--c:#6FA8FF"><b>World Explorer</b><span>Visit places on a map.</span></div>
+      <div style="--c:#B38BFF"><b>AI Reading Coach</b><span>Practice reading out loud.</span></div>
+    </div>
+    <div class="devices" aria-label="Apps">
+      <span class="chip"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFD23F" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>Coming soon to iPhone, iPad and Android</span>
+      <span style="color:var(--muted)">Until then, play free in any modern browser on a phone, tablet or computer.</span>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2>Ready to explore?</h2>
+    <p class="lead" style="margin:0 auto 1.4em">Grab a grown-up and start your first mission.</p>
+    <a class="cta" href="play/">Play now <span aria-hidden="true">›</span></a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 NEXUS · Made by Nijaz Salkic</span>
+    <nav aria-label="Footer">
+      <a href="privacy.html">Privacy</a>
+      <a href="support.html">Support</a>
+      <a href="mailto:nsalkicpr@gmail.com">Contact</a>
+      <a href="play/">Play</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>
