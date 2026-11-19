@@ -216,6 +216,14 @@ const engine = new Engine(GODOT_CONFIG);
 	}
 }());
 		</script>
+	<script>
+// NEXUS: look for a newer build when the page opens and whenever it comes back to the front.
+if ('serviceWorker' in navigator) {
+	const nexusCheckUpdate = () => navigator.serviceWorker.getRegistration().then((r) => r && r.update()).catch(() => {});
+	window.addEventListener('load', () => setTimeout(nexusCheckUpdate, 5000));
+	document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { nexusCheckUpdate(); } });
+}
+</script>
 	</body>
 </html>
 

@@ -1,166 +1,101 @@
-// This service worker is required to expose an exported Godot project as a
-// Progressive Web App. It provides an offline fallback page telling the user
-// that they need an Internet connection to run the project if desired.
-// Incrementing CACHE_VERSION will kick off the install event and force
-// previously cached resources to be updated from the network.
-/** @type {string} */
-const CACHE_VERSION = '1795078653|3590376';
-/** @type {string} */
+// NEXUS web service worker (replaces the one Godot exports; installed by tools/web/build_web.sh).
+// Why: Godot's default worker serves index.html / index.pck / index.wasm cache-first and waits for every
+// tab to close before a new version takes over, so a returning visitor (especially on iPhone / iPad Safari
+// or the home-screen app, where tabs are rarely closed) could stay on an old build forever.
+// This worker:
+//  - takes over at once (skipWaiting + clients.claim),
+//  - always asks the network first, revalidating with the server (cheap 304s), so a page and its
+//    index.pck / index.wasm always come from the same build; the content packs (packs/*.pck?v=build)
+//    are never touched here and use the normal browser cache,
+//  - keeps only the small offline page in Cache Storage, shown when there is no connection,
+//  - on taking over from the old cache-first worker, deletes its caches and reloads open pages once,
+//    so people already stuck on an old build are moved to the new one without doing anything.
+const CACHE_VERSION = '1795085888|sw2';
 const CACHE_PREFIX = 'NEXUS-sw-cache-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
-/** @type {string} */
 const OFFLINE_URL = 'index.offline.html';
-/** @type {boolean} */
-const ENSURE_CROSSORIGIN_ISOLATION_HEADERS = false;
-// Files that will be cached on load.
-/** @type {string[]} */
-const CACHED_FILES = ["index.html","index.js","index.offline.html","index.icon.png","index.apple-touch-icon.png","index.audio.worklet.js","index.audio.position.worklet.js"];
-// Files that we might not want the user to preload, and will only be cached on first load.
-/** @type {string[]} */
-const CACHEABLE_FILES = ["index.wasm","index.pck"];
-const FULL_CACHE = CACHED_FILES.concat(CACHEABLE_FILES);
+const BUILD_FILES = ['index.html', 'index.js', 'index.wasm', 'index.pck', 'index.audio.worklet.js',
+	'index.audio.position.worklet.js', 'index.manifest.json', 'index.service.worker.js'];
 
 self.addEventListener('install', (event) => {
-	event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(CACHED_FILES)));
+	self.skipWaiting();
+	event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.add(new Request(OFFLINE_URL, { cache: 'no-cache' }))).catch(() => {}));
 });
 
 self.addEventListener('activate', (event) => {
-	event.waitUntil(caches.keys().then(
-		function (keys) {
-			// Remove old caches.
-			return Promise.all(keys.filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME).map((key) => caches.delete(key)));
+	const ready = (async () => {
+		let trapped = false;
+		for (const key of await caches.keys()) {
+			if (!key.startsWith(CACHE_PREFIX) || key === CACHE_NAME) {
+				continue;
+			}
+			const old = await caches.open(key);
+			if (await old.match('index.pck') || await old.match('index.html')) {
+				trapped = true; // an old cache-first build was being served from here
+			}
+			await caches.delete(key);
 		}
-	).then(function () {
-		// Enable navigation preload if available.
-		return ('navigationPreload' in self.registration) ? self.registration.navigationPreload.enable() : Promise.resolve();
-	}));
+		if ('navigationPreload' in self.registration) {
+			try { await self.registration.navigationPreload.disable(); } catch (e) { /* not supported */ }
+		}
+		await self.clients.claim();
+		return trapped;
+	})();
+	event.waitUntil(ready);
+	// Reload pages that were running an old build, but only after activation has finished: the reload's
+	// own request is handled by this worker, which cannot answer it while still activating.
+	ready.then((trapped) => {
+		if (trapped) {
+			setTimeout(async () => {
+				for (const client of await self.clients.matchAll({ type: 'window' })) {
+					try { await client.navigate(client.url); } catch (e) { /* it gets the new build on its next load */ }
+				}
+			}, 0);
+		}
+	});
 });
 
-/**
- * Ensures that the response has the correct COEP/COOP headers
- * @param {Response} response
- * @returns {Response}
- */
-function ensureCrossOriginIsolationHeaders(response) {
-	if (response.headers.get('Cross-Origin-Embedder-Policy') === 'require-corp'
-		&& response.headers.get('Cross-Origin-Opener-Policy') === 'same-origin') {
-		return response;
+function buildFile(url) {
+	const scope = self.registration.scope;
+	if (!url.startsWith(scope)) {
+		return '';
 	}
-
-	const crossOriginIsolatedHeaders = new Headers(response.headers);
-	crossOriginIsolatedHeaders.set('Cross-Origin-Embedder-Policy', 'require-corp');
-	crossOriginIsolatedHeaders.set('Cross-Origin-Opener-Policy', 'same-origin');
-	const newResponse = new Response(response.body, {
-		status: response.status,
-		statusText: response.statusText,
-		headers: crossOriginIsolatedHeaders,
-	});
-
-	return newResponse;
+	const rest = url.slice(scope.length).split('?')[0].split('#')[0];
+	return BUILD_FILES.includes(rest) ? rest : '';
 }
 
-/**
- * Calls fetch and cache the result if it is cacheable
- * @param {FetchEvent} event
- * @param {Cache} cache
- * @param {boolean} isCacheable
- * @returns {Response}
- */
-async function fetchAndCache(event, cache, isCacheable) {
-	// Use the preloaded response, if it's there
-	/** @type { Response } */
-	let response = await event.preloadResponse;
-	if (response == null) {
-		// Or, go over network.
-		response = await self.fetch(event.request);
+self.addEventListener('fetch', (event) => {
+	const req = event.request;
+	if (req.method !== 'GET') {
+		return;
 	}
-
-	if (ENSURE_CROSSORIGIN_ISOLATION_HEADERS) {
-		response = ensureCrossOriginIsolationHeaders(response);
+	const isNavigate = req.mode === 'navigate';
+	if (!isNavigate && !buildFile(req.url)) {
+		return; // packs, icons, everything else: straight to the network / browser cache
 	}
-
-	if (isCacheable) {
-		// And update the cache
-		cache.put(event.request, response.clone());
-	}
-
-	return response;
-}
-
-self.addEventListener(
-	'fetch',
-	/**
-	 * Triggered on fetch
-	 * @param {FetchEvent} event
-	 */
-	(event) => {
-		const isNavigate = event.request.mode === 'navigate';
-		const url = event.request.url || '';
-		const referrer = event.request.referrer || '';
-		const base = referrer.slice(0, referrer.lastIndexOf('/') + 1);
-		const local = url.startsWith(base) ? url.replace(base, '') : '';
-		const isCacheable = FULL_CACHE.some((v) => v === local) || (base === referrer && base.endsWith(CACHED_FILES[0]));
-		if (isNavigate || isCacheable) {
-			event.respondWith((async () => {
-				// Try to use cache first
-				const cache = await caches.open(CACHE_NAME);
-				if (isNavigate) {
-					// Check if we have full cache during HTML page request.
-					/** @type {Response[]} */
-					const fullCache = await Promise.all(FULL_CACHE.map((name) => cache.match(name)));
-					const missing = fullCache.some((v) => v === undefined);
-					if (missing) {
-						try {
-							// Try network if some cached file is missing (so we can display offline page in case).
-							const response = await fetchAndCache(event, cache, isCacheable);
-							return response;
-						} catch (e) {
-							// And return the hopefully always cached offline page in case of network failure.
-							console.error('Network error: ', e); // eslint-disable-line no-console
-							return caches.match(OFFLINE_URL);
-						}
-					}
+	event.respondWith((async () => {
+		try {
+			// Revalidate with the server so html, js, wasm and pck always match one build.
+			return await fetch(isNavigate ? new Request(req.url, { cache: 'no-cache', credentials: 'same-origin' }) : new Request(req, { cache: 'no-cache' }));
+		} catch (e) {
+			if (isNavigate) {
+				const offline = await caches.match(OFFLINE_URL);
+				if (offline) {
+					return offline;
 				}
-				let cached = await cache.match(event.request);
-				if (cached != null) {
-					if (ENSURE_CROSSORIGIN_ISOLATION_HEADERS) {
-						cached = ensureCrossOriginIsolationHeaders(cached);
-					}
-					return cached;
-				}
-				// Try network if don't have it in cache.
-				const response = await fetchAndCache(event, cache, isCacheable);
-				return response;
-			})());
-		} else if (ENSURE_CROSSORIGIN_ISOLATION_HEADERS) {
-			event.respondWith((async () => {
-				let response = await fetch(event.request);
-				response = ensureCrossOriginIsolationHeaders(response);
-				return response;
-			})());
+			}
+			throw e;
 		}
-	}
-);
+	})());
+});
 
 self.addEventListener('message', (event) => {
-	// No cross origin
 	if (event.origin !== self.origin) {
 		return;
 	}
-	const id = event.source.id || '';
-	const msg = event.data || '';
-	// Ensure it's one of our clients.
-	self.clients.get(id).then(function (client) {
-		if (!client) {
-			return; // Not a valid client.
-		}
-		if (msg === 'claim') {
-			self.skipWaiting().then(() => self.clients.claim());
-		} else if (msg === 'clear') {
-			caches.delete(CACHE_NAME);
-		} else if (msg === 'update') {
-			self.skipWaiting().then(() => self.clients.claim()).then(() => self.clients.matchAll()).then((all) => all.forEach((c) => c.navigate(c.url)));
-		}
-	});
+	if (event.data === 'claim' || event.data === 'update') {
+		event.waitUntil(self.skipWaiting().then(() => self.clients.claim()));
+	} else if (event.data === 'clear') {
+		event.waitUntil(caches.delete(CACHE_NAME));
+	}
 });
-
