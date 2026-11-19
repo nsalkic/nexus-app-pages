@@ -10,7 +10,7 @@
 //  - keeps only the small offline page in Cache Storage, shown when there is no connection,
 //  - on taking over from the old cache-first worker, deletes its caches and reloads open pages once,
 //    so people already stuck on an old build are moved to the new one without doing anything.
-const CACHE_VERSION = '1795085888|sw2';
+const CACHE_VERSION = '1795122752|3391587';
 const CACHE_PREFIX = 'NEXUS-sw-cache-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 const OFFLINE_URL = 'index.offline.html';
