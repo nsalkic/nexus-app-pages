@@ -8,9 +8,9 @@
 //    index.pck / index.wasm always come from the same build; the content packs (packs/*.pck?v=build)
 //    are never touched here and use the normal browser cache,
 //  - keeps only the small offline page in Cache Storage, shown when there is no connection,
-//  - on taking over from the old cache-first worker, deletes its caches and reloads open pages once,
-//    so people already stuck on an old build are moved to the new one without doing anything.
-const CACHE_VERSION = '1795122752|3391587';
+//  - on taking over from any older worker (Godot's cache-first one or an older NEXUS build), deletes its
+//    caches and reloads open pages once, so a tab left open across a release moves to the new build.
+const CACHE_VERSION = '1795124712|3275488';
 const CACHE_PREFIX = 'NEXUS-sw-cache-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 const OFFLINE_URL = 'index.offline.html';
@@ -29,10 +29,9 @@ self.addEventListener('activate', (event) => {
 			if (!key.startsWith(CACHE_PREFIX) || key === CACHE_NAME) {
 				continue;
 			}
-			const old = await caches.open(key);
-			if (await old.match('index.pck') || await old.match('index.html')) {
-				trapped = true; // an old cache-first build was being served from here
-			}
+			// Any older NEXUS cache means a page may still be running an older build (Godot's cache-first worker,
+			// or a tab left open across a release, common on iPhone Safari): reload those pages once.
+			trapped = true;
 			await caches.delete(key);
 		}
 		if ('navigationPreload' in self.registration) {
